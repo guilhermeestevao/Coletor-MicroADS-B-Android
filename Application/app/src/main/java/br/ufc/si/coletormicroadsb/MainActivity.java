@@ -3,6 +3,8 @@ package br.ufc.si.coletormicroadsb;
 
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,43 +17,47 @@ import br.ufc.si.coletormicroadsb.usb.UsbController;
 public class MainActivity extends ActionBarActivity {
 
     private TextView info;
-    private Button check;
+
     private UsbController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        check = (Button) findViewById(R.id.check);
         info = (TextView) findViewById(R.id.info);
-        check.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                checkInfo();
-            }
-        });
+        checkInfo();
 
     }
 
     private void checkInfo() {
-        controller = new UsbController(this);
-        Map<String, UsbDevice> devices = controller.getDevices();
-        Iterator<UsbDevice> deviceIterator = devices.values().iterator();
-
+        controller = new UsbController(this, this.getIntent());
+        UsbDevice device = controller.getMicroAdsb();
         String i = "";
-        while (deviceIterator.hasNext()) {
-            UsbDevice device = deviceIterator.next();
+        if(device != null) {
             i += "\n" +
                     "DeviceID: " + device.getDeviceId() + "\n" +
                     "DeviceName: " + device.getDeviceName() + "\n" +
-                    "DeviceClass: " + device.getDeviceClass() + " - "+ translateDeviceClass(device.getDeviceClass()) + "\n" +
+                    "DeviceClass: " + device.getDeviceClass() + " - " + translateDeviceClass(device.getDeviceClass()) + "\n" +
                     "DeviceSubClass: " + device.getDeviceSubclass() + "\n" +
                     "VendorID: " + device.getVendorId() + "\n" +
-                    "ProductID: " + device.getProductId() + "\n";
-        }
+                    "ProductID: " + device.getProductId() + "\n" +
+                    "Interfaces Quantidade:" +device.getInterfaceCount()+"\n";
 
+                    for(int j = 0; j<device.getInterfaceCount(); j++){
+                        UsbInterface usbInterface = device.getInterface(j);
+                        i+="Interface "+j+" com "+usbInterface.getEndpointCount()+"endPoints \n";
+
+                        for(int k = 0; k < usbInterface.getEndpointCount(); k++){
+                            UsbEndpoint point = usbInterface.getEndpoint(k);
+                            i+="EndPoint "+k+" com address "+point.getAddress()+"\n";
+                        }
+
+                    }
+
+
+        }else{
+            i+="Micro ADS-B disconectado!";
+        }
         info.setText(i);
     }
 
