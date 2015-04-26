@@ -33,6 +33,7 @@ public class MainActivity extends ActionBarActivity {
         controller = new UsbController(this, this.getIntent());
         UsbDevice device = controller.getMicroAdsb();
         String i = "";
+        String saida = "";
         if(device != null) {
             i += "\n" +
                     "DeviceID: " + device.getDeviceId() + "\n" +
@@ -45,11 +46,12 @@ public class MainActivity extends ActionBarActivity {
 
                     for(int j = 0; j<device.getInterfaceCount(); j++){
                         UsbInterface usbInterface = device.getInterface(j);
-                        i+="Interface "+j+" com "+usbInterface.getEndpointCount()+"endPoints \n";
+                        i+="Interface "+j+" com "+usbInterface.getEndpointCount()+" endPoints \n";
 
                         for(int k = 0; k < usbInterface.getEndpointCount(); k++){
                             UsbEndpoint point = usbInterface.getEndpoint(k);
-                            i+="EndPoint "+k+" com address "+point.getAddress()+"\n";
+                            saida = point.getDirection() == UsbConstants.USB_DIR_IN ? "In":"Out";
+                            i+="EndPoint "+k+ " ("+ saida+") " +  "com address "+point.getAddress()+"\n";
                         }
 
                     }
