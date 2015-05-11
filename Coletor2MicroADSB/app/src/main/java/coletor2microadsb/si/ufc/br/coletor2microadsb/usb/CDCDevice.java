@@ -42,7 +42,6 @@ public class CDCDevice {
     private final UsbEndpoint portIn;
     private final UsbEndpoint portOut;
     private final UsbEndpoint portControl;
-
     private final Context context;
 
     public CDCDevice(UsbManager manger, UsbDevice device, Context context){
@@ -85,17 +84,16 @@ public class CDCDevice {
                 request.initialize(connection, portIn);
                 final ByteBuffer buf = ByteBuffer.wrap(dest);
                 if (!request.queue(buf, dest.length)) {
-                    throw new IOException("Error queueing request.");
+                    throw new IOException("Erro no empilhamento de requisições.");
                 }
 
                 final UsbRequest response = connection.requestWait();
                 if (response == null) {
-                    throw new IOException("Null response");
+                    throw new IOException("Sem resposta");
                 }
 
                 final int nread = buf.position();
                 if (nread > 0) {
-                    //Log.d(TAG, HexDump.dumpHexString(dest, 0, Math.min(32, dest.length)));
                     return nread;
                 } else {
                     return 0;
@@ -138,7 +136,6 @@ public class CDCDevice {
                 if (offset == 0) {
                     writeBuffer = src;
                 } else {
-                    // bulkTransfer does not support offsets, make a copy.
                     System.arraycopy(src, offset, mWriteBuffer, 0, writeLength);
                     writeBuffer = mWriteBuffer;
                 }
@@ -147,8 +144,8 @@ public class CDCDevice {
                         timeoutMillis);
             }
             if (amtWritten <= 0) {
-                throw new IOException("Error writing " + writeLength
-                        + " bytes at offset " + offset + " length=" + src.length);
+                throw new IOException("Erro para escrever " + writeLength
+                        + " bytes no offset " + offset + " length=" + src.length);
             }
 
             offset += amtWritten;
@@ -162,7 +159,7 @@ public class CDCDevice {
             case STOPBITS_1: stopBitsByte = 0; break;
             case STOPBITS_1_5: stopBitsByte = 1; break;
             case STOPBITS_2: stopBitsByte = 2; break;
-            default: throw new IllegalArgumentException("Bad value for stopBits: " + stopBits);
+            default: throw new IllegalArgumentException("Valor invalido para stopBits: " + stopBits);
         }
 
         byte parityBitesByte;
@@ -172,7 +169,7 @@ public class CDCDevice {
             case PARITY_EVEN: parityBitesByte = 2; break;
             case PARITY_MARK: parityBitesByte = 3; break;
             case PARITY_SPACE: parityBitesByte = 4; break;
-            default: throw new IllegalArgumentException("Bad value for parity: " + parity);
+            default: throw new IllegalArgumentException("Valor invalido para parity: " + parity);
         }
 
         byte[] msg = {
@@ -185,34 +182,4 @@ public class CDCDevice {
                 (byte) dataBits};
         sendAcmControlMessage(SET_LINE_CODING, 0, msg);
     }
-
-    /*
-
-
-    public void configure(int baudrate, int bitsParity, int bitsPerSymbol){
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putInt(baudrate);
-        buffer.putChar((char) bitsParity);
-        buffer.putChar((char) bitsPerSymbol);
-
-        boolean successful;
-
-    }
-
-    public boolean send(String text) {
-        byte[] bytes = text.getBytes();
-        return send(bytes);
-    }
-
-    public boolean send(byte[] bytes) {
-        int length = connection.bulkTransfer(out, bytes, bytes.length, 1000);
-        return length == bytes.length;
-    }
-
-    */
-
-
-
-
 }
