@@ -8,6 +8,8 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -78,21 +80,28 @@ public class CDCDevice {
     }
 
     public int read(byte[] dest, int timeoutMillis) throws IOException {
+
+
         if (mEnableAsyncReads) {
+
             final UsbRequest request = new UsbRequest();
             try {
                 request.initialize(connection, portIn);
+
                 final ByteBuffer buf = ByteBuffer.wrap(dest);
+
                 if (!request.queue(buf, dest.length)) {
                     throw new IOException("Erro no empilhamento de requisições.");
                 }
 
                 final UsbRequest response = connection.requestWait();
+
                 if (response == null) {
                     throw new IOException("Sem resposta");
                 }
 
                 final int nread = buf.position();
+
                 if (nread > 0) {
                     return nread;
                 } else {
@@ -102,6 +111,8 @@ public class CDCDevice {
                 request.close();
             }
         }
+
+
 
         final int numBytesRead;
         synchronized (mReadBufferLock) {
@@ -117,6 +128,7 @@ public class CDCDevice {
             }
             System.arraycopy(mReadBuffer, 0, dest, 0, numBytesRead);
         }
+
         return numBytesRead;
     }
 

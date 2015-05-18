@@ -35,4 +35,11 @@
         android:text="Resultado: "
         />
 
+    <ListView
+        android:id="@+id/lisView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffff5d47"
+        android:layout_below="@id/recebido"/>
+
 </RelativeLayout>

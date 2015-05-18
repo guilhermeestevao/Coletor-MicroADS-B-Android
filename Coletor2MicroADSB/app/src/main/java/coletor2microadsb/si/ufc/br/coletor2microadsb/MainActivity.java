@@ -4,33 +4,35 @@ import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
-import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+
 import coletor2microadsb.si.ufc.br.coletor2microadsb.usb.CDCDevice;
 import coletor2microadsb.si.ufc.br.coletor2microadsb.usb.UsbController;
-
 
 
 public class MainActivity extends ActionBarActivity {
 
     private TextView info;
-
+    private List<String> mensagens = new ArrayList<String>();
     private UsbController controller;
     private CDCDevice cdcDevice;
     private TextView result;
     private EditText msg;
+    private ListView list;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,10 @@ public class MainActivity extends ActionBarActivity {
         info = (TextView) findViewById(R.id.info);
         result = (TextView) findViewById(R.id.recebido);
         msg = (EditText) findViewById(R.id.msg);
+        list = (ListView) findViewById(R.id.lisView);
+        mensagens.add("Teste!");
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mensagens);
+        list.setAdapter(adapter);
         checkInfo();
 
     }
@@ -46,7 +52,8 @@ public class MainActivity extends ActionBarActivity {
     private void checkInfo() {
         controller = new UsbController(this, this.getIntent());
         final UsbDevice device = controller.getMicroAdsb();
-         String i = "";
+        /*
+        String i = "";
         String saida = "";
         if(device != null) {
 
@@ -70,19 +77,18 @@ public class MainActivity extends ActionBarActivity {
                 }
 
             }
-
+            */
+        if (device != null) {
             cdcDevice = new CDCDevice(controller.getManager(), device, this);
             cdcDevice.setParameters(115200, 8, 1, 0);
 
 
-        }else{
-            i+="Micro ADS-B disconectado!";
         }
-        info.setText(i);
+        //info.setText(i);
     }
 
-    private String translateDeviceClass(int deviceClass){
-        switch(deviceClass){
+    private String translateDeviceClass(int deviceClass) {
+        switch (deviceClass) {
             case UsbConstants.USB_CLASS_APP_SPEC:
                 return "Application specific USB class";
             case UsbConstants.USB_CLASS_AUDIO:
@@ -117,41 +123,46 @@ public class MainActivity extends ActionBarActivity {
                 return "USB class for video devices";
             case UsbConstants.USB_CLASS_WIRELESS_CONTROLLER:
                 return "USB class for wireless controller devices";
-            default: return "Unknown USB class!";
+            default:
+                return "Unknown USB class!";
 
         }
     }
 
-    public void teste(View view){
+    public void teste(View view) {
         String text = msg.getText().toString();
-        if(!text.equals("")) {
+        if (!text.equals("")) {
             msg.setText("");
             new TesteTask().execute(text);
-        }else {
+        } else {
             return;
         }
     }
 
-    class TesteTask extends AsyncTask<String, Void, Integer>{
+    class TesteTask extends AsyncTask<String, Void, Integer> {
 
         @Override
         protected void onPostExecute(Integer integer) {
             byte[] bytes = new byte[64];
             String resultRead = null;
             int i;
+            int pos = 1000;
             try {
                 i = cdcDevice.read(bytes, 100);
                 resultRead = new String(bytes, "UTF-8");
+
+                new MensagemTask().execute();
+
             } catch (IOException e) {
-                e.printStackTrace();
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
-            result.setText(resultRead);
+            result.setText(resultRead + "\n");
         }
 
         @Override
         protected Integer doInBackground(String... strings) {
-            String teste =  strings[0]+"\r\n";
+            String teste = strings[0] + "\r\n";
             try {
                 int i = cdcDevice.write(teste.getBytes(), 1000);
                 return i;
@@ -162,4 +173,48 @@ public class MainActivity extends ActionBarActivity {
             return null;
         }
     }
+
+    class MensagemTask extends AsyncTask<Void, Void, String> {
+
+        byte[] buffer = new byte[64];
+        String resultRead = null;
+        int i = 0;
+
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(MainActivity.this, "Procurar...", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            mensagens.add(s);
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                i = cdcDevice.read(buffer, 100);
+
+                if (i > 0) {
+
+                    resultRead = new String(buffer, "UTF-8");
+
+                    return resultRead;
+
+                }
+
+            } catch (IOException e) {
+                return e.getMessage();
+            }
+
+            return "Coletor desconectado!";
+        }
+
+
+
+
+    }
+
 }
