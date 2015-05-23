@@ -1,145 +1,111 @@
 package coletor2microadsb.si.ufc.br.coletor2microadsb;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbEndpoint;
-import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import coletor2microadsb.si.ufc.br.coletor2microadsb.modelo.Mensagem;
+import coletor2microadsb.si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
 import coletor2microadsb.si.ufc.br.coletor2microadsb.usb.CDCDevice;
 import coletor2microadsb.si.ufc.br.coletor2microadsb.usb.UsbController;
 
 
 public class MainActivity extends ActionBarActivity {
 
+
     private TextView info;
     private List<String> mensagens = new ArrayList<String>();
     private UsbController controller;
     private CDCDevice cdcDevice;
-    private TextView result;
-    private EditText msg;
+    private Button start;
+    private RepositorioMensagem repositorio;
     private ListView list;
     private ArrayAdapter<String> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        repositorio = new RepositorioMensagem(this);
         info = (TextView) findViewById(R.id.info);
-        result = (TextView) findViewById(R.id.recebido);
-        msg = (EditText) findViewById(R.id.msg);
+        start = (Button) findViewById(R.id.enviar);
         list = (ListView) findViewById(R.id.lisView);
-        mensagens.add("Teste!");
+
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mensagens);
         list.setAdapter(adapter);
         checkInfo();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }else if(id == R.id.action_list){
+            Intent it = new Intent(this, ListaMensagens.class);
+            startActivity(it);
+        }
+
+
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void checkInfo() {
         controller = new UsbController(this, this.getIntent());
         final UsbDevice device = controller.getMicroAdsb();
-        /*
-        String i = "";
-        String saida = "";
-        if(device != null) {
 
-            i += "\n" +
-                    "DeviceID: " + device.getDeviceId() + "\n" +
-                    "DeviceName: " + device.getDeviceName() + "\n" +
-                    "DeviceClass: " + device.getDeviceClass() + " - " + translateDeviceClass(device.getDeviceClass()) + "\n" +
-                    "DeviceSubClass: " + device.getDeviceSubclass() + "\n" +
-                    "VendorID: " + device.getVendorId() + "\n" +
-                    "ProductID: " + device.getProductId() + "\n" +
-                    "Interfaces Quantidade:" +device.getInterfaceCount()+"\n";
-
-            for(int j = 0; j<device.getInterfaceCount(); j++){
-                UsbInterface usbInterface = device.getInterface(j);
-                i+="Interface "+j+" com "+usbInterface.getEndpointCount()+" endPoints \n";
-
-                for(int k = 0; k < usbInterface.getEndpointCount(); k++){
-                    UsbEndpoint point = usbInterface.getEndpoint(k);
-                    saida = point.getDirection() == UsbConstants.USB_DIR_IN ? "In":"Out";
-                    i+="EndPoint "+k+ " ("+ saida+") " +  "com address "+point.getAddress()+"\n";
-                }
-
-            }
-            */
         if (device != null) {
             cdcDevice = new CDCDevice(controller.getManager(), device, this);
             cdcDevice.setParameters(115200, 8, 1, 0);
-
-
         }
-        //info.setText(i);
+
     }
 
-    private String translateDeviceClass(int deviceClass) {
-        switch (deviceClass) {
-            case UsbConstants.USB_CLASS_APP_SPEC:
-                return "Application specific USB class";
-            case UsbConstants.USB_CLASS_AUDIO:
-                return "USB class for audio devices";
-            case UsbConstants.USB_CLASS_CDC_DATA:
-                return "USB class for CDC devices (communications device class)";
-            case UsbConstants.USB_CLASS_COMM:
-                return "USB class for communication devices";
-            case UsbConstants.USB_CLASS_CONTENT_SEC:
-                return "USB class for content security devices";
-            case UsbConstants.USB_CLASS_CSCID:
-                return "USB class for content smart card devices";
-            case UsbConstants.USB_CLASS_HID:
-                return "USB class for human interface devices (for example, mice and keyboards)";
-            case UsbConstants.USB_CLASS_HUB:
-                return "USB class for USB hubs";
-            case UsbConstants.USB_CLASS_MASS_STORAGE:
-                return "USB class for mass storage devices";
-            case UsbConstants.USB_CLASS_MISC:
-                return "USB class for wireless miscellaneous devices";
-            case UsbConstants.USB_CLASS_PER_INTERFACE:
-                return "USB class indicating that the class is determined on a per-interface basis";
-            case UsbConstants.USB_CLASS_PHYSICA:
-                return "USB class for physical devices";
-            case UsbConstants.USB_CLASS_PRINTER:
-                return "USB class for printers";
-            case UsbConstants.USB_CLASS_STILL_IMAGE:
-                return "USB class for still image devices (digital cameras)";
-            case UsbConstants.USB_CLASS_VENDOR_SPEC:
-                return "Vendor specific USB class";
-            case UsbConstants.USB_CLASS_VIDEO:
-                return "USB class for video devices";
-            case UsbConstants.USB_CLASS_WIRELESS_CONTROLLER:
-                return "USB class for wireless controller devices";
-            default:
-                return "Unknown USB class!";
 
-        }
-    }
 
     public void teste(View view) {
-        String text = msg.getText().toString();
-        if (!text.equals("")) {
-            msg.setText("");
-            new TesteTask().execute(text);
-        } else {
-            return;
-        }
+        String inicializacao = "#43-02";
+        InitTask initTask =  new InitTask();
+        initTask.execute(inicializacao);
+        start.setEnabled(false);
     }
 
-    class TesteTask extends AsyncTask<String, Void, Integer> {
+    class InitTask extends AsyncTask<String, Void, Integer> {
 
         @Override
         protected void onPostExecute(Integer integer) {
@@ -150,14 +116,13 @@ public class MainActivity extends ActionBarActivity {
             try {
                 i = cdcDevice.read(bytes, 100);
                 resultRead = new String(bytes, "UTF-8");
-
-                new MensagemTask().execute();
-
             } catch (IOException e) {
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
-            result.setText(resultRead + "\n");
+            Toast.makeText(MainActivity.this, resultRead, Toast.LENGTH_LONG).show();
+            MessageReciverTask reciver = new MessageReciverTask();
+            reciver.execute();
         }
 
         @Override
@@ -174,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    class MensagemTask extends AsyncTask<Void, Void, String> {
+    class MessageReciverTask extends AsyncTask<Void, Void, String> {
 
         byte[] buffer = new byte[64];
         String resultRead = null;
@@ -183,13 +148,20 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(MainActivity.this, "Procurar...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Iniciando a captura...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(String s) {
             mensagens.add(s);
             adapter.notifyDataSetChanged();
+
+            long timestamp = System.currentTimeMillis();
+
+            Mensagem msg = new Mensagem(s, timestamp);
+            repositorio.inserir(msg);
+
+            this.execute();
         }
 
         @Override
@@ -211,9 +183,6 @@ public class MainActivity extends ActionBarActivity {
 
             return "Coletor desconectado!";
         }
-
-
-
 
     }
 

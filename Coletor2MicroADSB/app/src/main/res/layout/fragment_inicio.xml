@@ -1,11 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#ff427dff"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
-
+    android:layout_height="match_parent"
+    tools:context="coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.Inicio">
 
     <TextView
         android:id="@+id/info"
@@ -28,4 +24,5 @@
         android:background="#ff76ff61"
         android:layout_below="@id/enviar"/>
 
-</RelativeLayout>
+
+</FrameLayout>
