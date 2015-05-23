@@ -1,31 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#ff427dff"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.view.ViewPager
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
 
-    <TextView
-        android:id="@+id/info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:id="@+id/enviar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/info"
-        android:text="Enviar"
-        android:onClick="teste"/>
-
-
-    <ListView
-        android:id="@+id/lisView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ff76ff61"
-        android:layout_below="@id/enviar"/>
-
-</RelativeLayout>

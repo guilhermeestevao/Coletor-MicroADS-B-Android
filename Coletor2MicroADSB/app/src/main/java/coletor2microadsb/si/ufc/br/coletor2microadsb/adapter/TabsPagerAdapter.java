@@ -3,6 +3,7 @@ package coletor2microadsb.si.ufc.br.coletor2microadsb.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.Configuracoes;
 import coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.Inicio;
@@ -11,7 +12,7 @@ import coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.ListaMensagens;
 /**
  * Created by guilherme on 22/05/15.
  */
-public class TabsPagerAdapter extends FragmentPagerAdapter {
+public class TabsPagerAdapter extends FragmentStatePagerAdapter {
 
 
     public TabsPagerAdapter(FragmentManager fm) {
