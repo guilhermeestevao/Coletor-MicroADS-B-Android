@@ -1,27 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center"
     tools:context="coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.Inicio">
 
-    <TextView
-        android:id="@+id/info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <Button
-        android:id="@+id/enviar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/info"
-        android:text="Enviar"/>
+        android:id="@+id/iniciar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:text="Iniciar"
+        android:onClick="iniciar"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
-
-    <ListView
-        android:id="@+id/lisView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ff76ff61"
-        android:layout_below="@id/enviar"/>
-
-
-</FrameLayout>
+</LinearLayout>

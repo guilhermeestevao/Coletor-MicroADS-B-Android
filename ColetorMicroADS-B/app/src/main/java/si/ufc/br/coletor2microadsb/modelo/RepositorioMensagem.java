@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import si.ufc.br.coletor2microadsb.modelo.Mensagem.Mensagens;
@@ -11,7 +13,7 @@ import si.ufc.br.coletor2microadsb.modelo.Mensagem.Mensagens;
 /**
  * Created by guilherme on 21/05/15.
  */
-public class RepositorioMensagem {
+public class RepositorioMensagem implements Serializable{
 
     private static final String NOME_BANCO = "adsb";
     private static final String NOME_TABELA = "mensagens";
@@ -35,6 +37,11 @@ public class RepositorioMensagem {
 
     public long inserir(ContentValues values){
         long id = db.insert(NOME_TABELA, "", values);
+        return id;
+    }
+
+    public long removerTudo(){
+        long id = db.delete(NOME_TABELA, "", null);
         return id;
     }
 

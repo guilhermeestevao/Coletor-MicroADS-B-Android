@@ -10,12 +10,13 @@ import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
  * Created by guilherme on 09/05/15.
  */
-public class CDCDevice {
+public class CDCDevice implements Serializable{
 
     private static final int PARITY_NONE = 0;
     private static final int PARITY_ODD = 1;

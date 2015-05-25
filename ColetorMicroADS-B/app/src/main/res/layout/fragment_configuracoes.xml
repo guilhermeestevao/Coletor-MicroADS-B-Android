@@ -1,8 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="coletor2microadsb.si.ufc.br.coletor2microadsb.fragments.Configuracoes">
 
-    <!-- TODO: Update blank fragment layout -->
+    <Button
+        android:id="@+id/apagar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apagar todas as mensagens"
+        android:onClick="apagar"/>
 
-</FrameLayout>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Agendar exclusão das mensagens "
+        android:checked="true"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:text="Por intervalo de tempo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:text="Por limite de mensagens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RadioGroup>
+
+</LinearLayout>
