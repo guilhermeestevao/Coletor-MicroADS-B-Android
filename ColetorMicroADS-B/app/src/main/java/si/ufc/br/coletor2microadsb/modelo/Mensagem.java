@@ -2,6 +2,10 @@ package si.ufc.br.coletor2microadsb.modelo;
 
 import android.provider.BaseColumns;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by guilherme on 21/05/15.
  */
@@ -34,6 +38,8 @@ public class Mensagem {
 
     @Override
     public String toString() {
-        return this.data;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
+        String dataString = dateFormat.format(new Date(this.timestamp));
+        return this.data+" "+dataString;
     }
 }

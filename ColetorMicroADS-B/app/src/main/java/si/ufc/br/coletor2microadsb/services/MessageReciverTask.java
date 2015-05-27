@@ -3,11 +3,9 @@ package si.ufc.br.coletor2microadsb.services;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.os.AsyncTask;;
-import android.widget.Toast;
-
+import android.os.AsyncTask;
+import android.util.Log;;
 import java.io.IOException;
-
 import si.ufc.br.coletor2microadsb.R;
 import si.ufc.br.coletor2microadsb.modelo.Mensagem;
 import si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
@@ -28,7 +26,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     private NotificationManager mNotifyManager;
     private Notification.Builder mBuilder ;
     private int id = 1;
-
+    private final String TAG = "TAG";
 
     @Override
     protected void onPreExecute() {
@@ -44,6 +42,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
+        Log.i(TAG, "onProgressUpdate");
         mBuilder.setProgress(0, 0, true);
         mNotifyManager.notify(id, mBuilder.getNotification());
     }
@@ -51,17 +50,23 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
         publishProgress();
+
         try {
+            Log.i(TAG, "doInBackground");
             int i = getCdcDevice().read(buffer, 100);
+
             if (i > 0) {
                 resultRead = new String(buffer, "UTF-8");
                 return resultRead;
+            }else{
+                Log.i(TAG, "doInBackground (else)");
             }
         } catch (IOException e) {
             return e.getMessage();
         }
+
         this.setAtivo(false);
-        return "Coletor desconectado!";
+        return "Coletor desconectado! ";
     }
 
     @Override
@@ -70,9 +75,11 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
         Mensagem msg = new Mensagem(s, timestamp);
         getRepositorio().inserir(msg);
         if(ativo) {
+            Log.i(TAG, "onPostExecute (if)");
             this.execute();
         }else{
-            mBuilder.setContentText("Coletor desconectado!").setProgress(0,0,false);
+            Log.i(TAG, "onPostExecute (else)");
+            mBuilder.setContentText(s).setProgress(0,0,false);
             mNotifyManager.notify(id, mBuilder.getNotification());
         }
     }

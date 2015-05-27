@@ -1,5 +1,8 @@
 package si.ufc.br.coletor2microadsb;
 
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
@@ -9,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +23,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import si.ufc.br.coletor2microadsb.adapter.SectionsPagerAdapter;
 import si.ufc.br.coletor2microadsb.fragments.Inicio;
+import si.ufc.br.coletor2microadsb.modelo.Mensagem;
 import si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
 import si.ufc.br.coletor2microadsb.services.MessageReciverTask;
 import si.ufc.br.coletor2microadsb.usb.CDCDevice;
@@ -77,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent it = new Intent("ABRIR_CONFIGURACOES");
+            Intent it = new Intent(this, SetingsActivity.class);
             startActivity(it);
             return true;
         }
@@ -126,8 +131,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-
     class InitColetor extends AsyncTask<Void, Void, String>{
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
         @Override
         protected void onPostExecute(String s) {
@@ -136,11 +146,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             receiver.setRepositorio(repositorio);
             receiver.setAtivo(true);
             receiver.setContext(MainActivity.this);
+            //startService(new Intent(MainActivity.this, ReceiverService.class));
             receiver.execute();
         }
 
         @Override
         protected String doInBackground(Void... voids) {
+
             byte[] bytes = new byte[64];
             String resultRead = null;
             try {
@@ -153,4 +165,58 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         }
     }
+/*
+     class ReceiverService extends IntentService{
+
+        NotificationManager mNotifyManager;
+        Notification.Builder mBuilder;
+        int id = 1;
+
+        public ReceiverService(String nome) {
+        super(nome);
+
+        }
+
+        public ReceiverService() {
+            super("nome");
+
+        }
+
+
+        @Override
+        public void onCreate() {
+            super.onCreate();
+            Log.i("TAG", "onCreate");
+            mNotifyManager = (NotificationManager) MainActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new Notification.Builder(MainActivity.this);
+            mBuilder.setContentTitle("Capturando mensagens")
+                    .setContentText("Aguardando a chegada de mensagens...")
+                    .setSmallIcon(R.mipmap.ic_launcher);
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            Log.i("TAG", "onHandleIntent");
+               byte[] buffer = new byte[64];
+               String resultRead = null;
+
+               try {
+                   Log.i("TAG", "onHandleIntent");
+                   int i = cdcDevice.read(buffer, 100);
+                   if (i > 0) {
+                       resultRead = new String(buffer, "UTF-8");
+                   }else{
+                       Log.i("TAG", "Leitura do buffer interrompida");
+                       resultRead = "Leitura do buffer interrompida";
+                   }
+               } catch (IOException e) {
+                   resultRead = e.getMessage();
+               }finally{
+                   Log.i("TAG", "finally");
+                   Mensagem msg = new Mensagem(resultRead, System.currentTimeMillis());
+                   repositorio.inserir(msg);
+               }
+        }
+    }
+    */
 }
