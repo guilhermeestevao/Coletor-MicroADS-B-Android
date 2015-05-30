@@ -8,6 +8,7 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,15 +37,16 @@ public class CDCDevice implements Serializable{
     private final UsbInterface controlInterface;
     private final UsbInterface dataInterface;
     private final boolean forceClaim = true;
-    private final boolean mEnableAsyncReads = true;
+    private boolean mEnableAsyncReads = true;
     private final Object mReadBufferLock = new Object();
     private final Object mWriteBufferLock = new Object();
-    private byte[] mReadBuffer = new byte[64];
-    private byte[] mWriteBuffer = new byte[64];
+    private byte[] mReadBuffer = new byte[512];
+    private byte[] mWriteBuffer = new byte[512];
     private final UsbEndpoint portIn;
     private final UsbEndpoint portOut;
     private final UsbEndpoint portControl;
     private final Context context;
+    private int numBytesRead;
 
     public CDCDevice(UsbManager manger, UsbDevice device, Context context){
         connection = manger.openDevice(device);
@@ -81,47 +83,12 @@ public class CDCDevice implements Serializable{
 
     public int read(byte[] dest, int timeoutMillis) throws IOException {
 
-
-        if (mEnableAsyncReads) {
-
-            final UsbRequest request = new UsbRequest();
-            try {
-                request.initialize(connection, portIn);
-
-                final ByteBuffer buf = ByteBuffer.wrap(dest);
-
-                if (!request.queue(buf, dest.length)) {
-                    throw new IOException("Erro no empilhamento de requisições.");
-                }
-
-                final UsbRequest response = connection.requestWait();
-
-                if (response == null) {
-                    throw new IOException("Sem resposta");
-                }
-
-                final int nread = buf.position();
-
-                if (nread > 0) {
-                    return nread;
-                } else {
-                    return 0;
-                }
-            } finally {
-                request.close();
-            }
-        }
-
-
-
-        final int numBytesRead;
         synchronized (mReadBufferLock) {
             int readAmt = Math.min(dest.length, mReadBuffer.length);
             numBytesRead = connection.bulkTransfer(portIn, mReadBuffer, readAmt,timeoutMillis);
+
             if (numBytesRead < 0) {
-
                 if (timeoutMillis == Integer.MAX_VALUE) {
-
                     return -1;
                 }
                 return 0;

@@ -19,6 +19,7 @@
             android:title="Formas de exclusão"
             android:summary="Determine quando serão excluidas as mensagens"
             android:key="forma"
+            android:defaultValue="1"
             android:entries="@array/forma"
             android:entryValues="@array/forma_values" />
         <ListPreference

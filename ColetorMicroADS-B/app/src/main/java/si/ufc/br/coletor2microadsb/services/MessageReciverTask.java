@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;;
 import java.io.IOException;
 import si.ufc.br.coletor2microadsb.R;
+import si.ufc.br.coletor2microadsb.fragments.ListaMensagens;
 import si.ufc.br.coletor2microadsb.modelo.Mensagem;
 import si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
 import si.ufc.br.coletor2microadsb.usb.CDCDevice;
@@ -17,7 +18,7 @@ import si.ufc.br.coletor2microadsb.usb.CDCDevice;
 @SuppressWarnings("deprecation")
 public class MessageReciverTask extends AsyncTask<Void, Void, String> {
 
-    private byte[] buffer = new byte[64];
+    private byte[] buffer = new byte[512];
     private String resultRead = null;
     private RepositorioMensagem repositorio;
     private CDCDevice cdcDevice;
@@ -31,7 +32,6 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
         mNotifyManager =  (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new Notification.Builder(context);
         mBuilder.setContentTitle("Capturando mensagens")
@@ -42,46 +42,50 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
-        Log.i(TAG, "onProgressUpdate");
         mBuilder.setProgress(0, 0, true);
         mNotifyManager.notify(id, mBuilder.getNotification());
     }
 
     @Override
     protected String doInBackground(Void... voids) {
-        publishProgress();
-
         try {
-            Log.i(TAG, "doInBackground");
-            int i = getCdcDevice().read(buffer, 100);
-
-            if (i > 0) {
-                resultRead = new String(buffer, "UTF-8");
-                return resultRead;
-            }else{
-                Log.i(TAG, "doInBackground (else)");
-            }
+           while(!this.isCancelled()){
+               publishProgress();
+               int i = getCdcDevice().read(buffer, 100);
+               if (i > 0) {
+                   resultRead = new String(buffer).substring(0, i);
+                   salvar(resultRead);
+               }
+           }
         } catch (IOException e) {
             return e.getMessage();
         }
-
-        this.setAtivo(false);
-        return "Coletor desconectado! ";
+        return "Coleta interrompida!";
     }
 
     @Override
     protected void onPostExecute(String s) {
-        long timestamp = System.currentTimeMillis();
-        Mensagem msg = new Mensagem(s, timestamp);
-        getRepositorio().inserir(msg);
-        if(ativo) {
-            Log.i(TAG, "onPostExecute (if)");
-            this.execute();
-        }else{
-            Log.i(TAG, "onPostExecute (else)");
-            mBuilder.setContentText(s).setProgress(0,0,false);
-            mNotifyManager.notify(id, mBuilder.getNotification());
+        mBuilder.setContentText(s).setProgress(0,0,false);
+        mNotifyManager.notify(id, mBuilder.getNotification());
+    }
+
+    private void salvar(String mensagem) {
+        try {
+            mensagem = mensagem.replace(" ", "");
+            mensagem = mensagem.replace("\n", "");
+            mensagem = mensagem.substring(13, mensagem.length() - 2);
+            long timestamp = System.currentTimeMillis();
+            Mensagem msg = new Mensagem(mensagem, timestamp);
+            Log.i("usb", msg.toString());
+            getRepositorio().inserir(msg);
+        }catch (Exception e){
+            Log.i("usb", "error");
         }
+
+    }
+
+    public void parar(){
+        onPostExecute("Coleta interrompida!");
     }
 
     public RepositorioMensagem getRepositorio() {
@@ -115,4 +119,5 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     public void setContext(Context context) {
         this.context = context;
     }
+
 }

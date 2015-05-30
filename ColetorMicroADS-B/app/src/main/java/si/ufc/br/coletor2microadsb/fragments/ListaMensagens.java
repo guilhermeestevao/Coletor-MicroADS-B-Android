@@ -3,6 +3,7 @@ package si.ufc.br.coletor2microadsb.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,5 +53,9 @@ public class ListaMensagens extends Fragment {
         return v;
     }
 
+    public void notifacaNovamensagem(){
+        adapter.notifyDataSetChanged();
+        Log.i("TAG", "modificado");
+    }
 
 }

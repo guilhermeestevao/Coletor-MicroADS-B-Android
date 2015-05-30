@@ -11,7 +11,6 @@ import si.ufc.br.coletor2microadsb.R;
 public class Inicio extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static Button start;
 
     public static Inicio newInstance(int sectionNumber) {
         Inicio fragment = new Inicio();
@@ -37,13 +36,8 @@ public class Inicio extends Fragment {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_inicio, container, false);
-        start = (Button) v.findViewById(R.id.iniciar);
 
         return v;
-    }
-
-    public static Button getStartButton(){
-        return start;
     }
 
 }

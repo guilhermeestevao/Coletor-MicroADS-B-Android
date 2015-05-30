@@ -29,7 +29,7 @@ public class SetingsActivity extends PreferenceActivity implements SharedPrefere
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        iniciar();
+        //iniciar();
     }
 
     @Override

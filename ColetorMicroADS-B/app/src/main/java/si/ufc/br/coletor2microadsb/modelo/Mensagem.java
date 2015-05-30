@@ -40,6 +40,6 @@ public class Mensagem {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
         String dataString = dateFormat.format(new Date(this.timestamp));
-        return this.data+" "+dataString;
+        return dataString+"  "+data;
     }
 }
