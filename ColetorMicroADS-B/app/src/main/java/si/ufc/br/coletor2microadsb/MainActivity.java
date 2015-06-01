@@ -26,6 +26,7 @@ import java.io.IOException;
 import si.ufc.br.coletor2microadsb.adapter.SectionsPagerAdapter;
 import si.ufc.br.coletor2microadsb.fragments.ListaMensagens;
 import si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
+import si.ufc.br.coletor2microadsb.services.CapturaMensagens;
 import si.ufc.br.coletor2microadsb.services.MessageReciverTask;
 import si.ufc.br.coletor2microadsb.usb.CDCDevice;
 import si.ufc.br.coletor2microadsb.usb.UsbController;
@@ -34,18 +35,19 @@ import si.ufc.br.coletor2microadsb.usb.UsbController;
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private static final String MENSAGEM = "#43-02\r\n";
+    private static final String MENSAGEM = "#43-03\r\n";
     private UsbController controller;
     private CDCDevice cdcDevice;
     private ViewPager mViewPager;
     private RepositorioMensagem repositorio;
-
     private MessageReciverTask receiver;
+    private boolean ativo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkInfo();
+        ativo = false;
         receiver = new MessageReciverTask();
         repositorio = new RepositorioMensagem(this);
         setContentView(R.layout.activity_main);
@@ -105,6 +107,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public void iniciar(View view){
         ImageView img = (ImageView) view;
+
         if(receiver.isAtivo()) {
             receiver.setAtivo(false);
             receiver.parar();
@@ -113,6 +116,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             img.setImageResource(R.drawable.active);
             new InitColetor().execute();
         }
+
     }
 
     public void apagar(View view){
@@ -139,11 +143,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
             receiver.setCdcDevice(cdcDevice);
             receiver.setRepositorio(repositorio);
             receiver.setAtivo(true);
             receiver.setContext(MainActivity.this);
             receiver.execute();
+
         }
 
         @Override

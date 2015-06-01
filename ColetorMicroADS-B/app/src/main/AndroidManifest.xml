@@ -3,8 +3,8 @@
     package="si.ufc.br.coletor2microadsb" >
 
     <uses-feature android:name="android.hardware.usb.host" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".NewMainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
@@ -37,9 +37,20 @@
             android:label="@string/title_activity_setings"
             android:screenOrientation="landscape" >
         </activity>
-
-        
-
+        <receiver android:name=".services.VerificaConexao">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".services.SincronizaMensagens">
+            <intent-filter>
+                <action android:name="SINCRONIZAR_MENSGENS"/>
+            </intent-filter>
+        </service>
+        <service android:name=".services.CapturaMensagens">
+            <intent-filter>
+                <action android:name="INICIAR_CAPTURA_MENSAGENS"/>
+            </intent-filter>
+        </service>
     </application>
-
 </manifest>

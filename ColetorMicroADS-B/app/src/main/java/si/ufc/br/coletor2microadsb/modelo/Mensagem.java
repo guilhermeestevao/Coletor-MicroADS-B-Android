@@ -11,10 +11,11 @@ import java.util.Date;
  */
 public class Mensagem {
 
-    public static String[] colunas = new String[] {Mensagens._ID, Mensagens.DATA, Mensagens.TIMESTAMP};
+    public static String[] colunas = new String[] {Mensagens._ID, Mensagens.DATA, Mensagens.TIMESTAMP, Mensagens.SINC};
     public long id;
     public String data;
     public long timestamp;
+    public int sinc;
 
     public Mensagem(){
 
@@ -23,12 +24,14 @@ public class Mensagem {
     public Mensagem(String data, long timestamp){
         this.data = data;
         this.timestamp = timestamp;
+        this.sinc = 0;
     }
 
     public static final class Mensagens implements BaseColumns{
 
         public static final String DATA = "data";
         public static final String TIMESTAMP = "timestamp";
+        public static final String SINC = "sinc";
 
         private Mensagens(){
 
@@ -40,6 +43,6 @@ public class Mensagem {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
         String dataString = dateFormat.format(new Date(this.timestamp));
-        return dataString+"  "+data;
+        return dataString+"  "+data+" status: "+(sinc == 0 ? false:true);
     }
 }

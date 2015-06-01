@@ -39,9 +39,12 @@ public class ListaMensagens extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repositorio = new RepositorioMensagem(getActivity());
-        mensagens = repositorio.findAll();
-        adapter = new MensagemAdapter(getActivity(), mensagens);
+        try {
+            mensagens = repositorio.findAll();
+            adapter = new MensagemAdapter(getActivity(), mensagens);
+        }catch (Exception e){
 
+        }
     }
 
     @Override

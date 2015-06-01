@@ -70,18 +70,22 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     }
 
     private void salvar(String mensagem) {
-        try {
-            mensagem = mensagem.replace(" ", "");
-            mensagem = mensagem.replace("\n", "");
-            mensagem = mensagem.substring(13, mensagem.length() - 2);
-            long timestamp = System.currentTimeMillis();
-            Mensagem msg = new Mensagem(mensagem, timestamp);
-            Log.i("usb", msg.toString());
-            getRepositorio().inserir(msg);
-        }catch (Exception e){
-            Log.i("usb", "error");
-        }
 
+        mensagem = mensagem.replaceAll("[\\t\\n\\r]"," ");
+        mensagem = mensagem.replaceAll(" ", "");
+        String msgs[] =  mensagem.split("@");
+                for (int i = 1; i < msgs.length; i++) {
+                    try {
+                        String msg = msgs[i];
+                        msg = msg.substring(12, mensagem.length() - 2);
+                        Log.d("usb", msg);
+                        long timestamp = System.currentTimeMillis();
+                        Mensagem m = new Mensagem(msg, timestamp);
+                        getRepositorio().inserir(m);
+                    }catch (Exception e){
+                        continue;
+                    }
+                }
     }
 
     public void parar(){
