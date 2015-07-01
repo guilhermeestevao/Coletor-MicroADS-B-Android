@@ -1,33 +1,24 @@
 package si.ufc.br.coletor2microadsb;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import si.ufc.br.coletor2microadsb.adapter.SectionsPagerAdapter;
-import si.ufc.br.coletor2microadsb.fragments.ListaMensagens;
 import si.ufc.br.coletor2microadsb.modelo.RepositorioMensagem;
-import si.ufc.br.coletor2microadsb.services.CapturaMensagens;
 import si.ufc.br.coletor2microadsb.services.MessageReciverTask;
+import si.ufc.br.coletor2microadsb.services.VerificaConexao;
 import si.ufc.br.coletor2microadsb.usb.CDCDevice;
 import si.ufc.br.coletor2microadsb.usb.UsbController;
 
@@ -43,14 +34,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private MessageReciverTask receiver;
     private boolean ativo;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         checkInfo();
+        Intent it = new Intent(this, VerificaConexao.class);
+        sendBroadcast(it);
         ativo = false;
         receiver = new MessageReciverTask();
         repositorio = new RepositorioMensagem(this);
-        setContentView(R.layout.activity_main);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

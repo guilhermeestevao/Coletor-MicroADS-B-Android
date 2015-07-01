@@ -4,7 +4,7 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -18,12 +18,10 @@
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -42,14 +40,10 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <service android:name=".services.SincronizaMensagens">
+        <service android:name=".services.SocketCliente">
             <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
                 <action android:name="SINCRONIZAR_MENSGENS"/>
-            </intent-filter>
-        </service>
-        <service android:name=".services.CapturaMensagens">
-            <intent-filter>
-                <action android:name="INICIAR_CAPTURA_MENSAGENS"/>
             </intent-filter>
         </service>
     </application>

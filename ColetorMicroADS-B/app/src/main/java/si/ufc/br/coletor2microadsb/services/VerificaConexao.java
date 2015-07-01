@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,12 +18,14 @@ public class VerificaConexao extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i("connection", "verificado!");
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         if(info != null){
             if(info.isConnected()){
                 Log.i("connection", "conectado!");
-                context.startService(new Intent(context, SincronizaMensagens.class));
+                Intent it = new Intent(context, SocketCliente.class);
+                context.startService(it);
             }
         }
     }

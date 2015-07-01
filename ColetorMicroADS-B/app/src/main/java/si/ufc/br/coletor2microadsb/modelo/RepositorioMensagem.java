@@ -61,7 +61,7 @@ public class RepositorioMensagem implements Serializable{
         return null;
     }
 
-    public List<Mensagem> findNaoSincronizadas(){
+    public synchronized List<Mensagem> findNaoSincronizadas(){
         Cursor c = db.query(true, NOME_TABELA, Mensagem.colunas, Mensagens.SINC + "=" + 0, null, null, null, null, null);
         List<Mensagem> msgs = new ArrayList<Mensagem>();
         if(c.getCount() > 0){
@@ -110,6 +110,20 @@ public class RepositorioMensagem implements Serializable{
             }while(c.moveToNext());
         }
         return msgs;
+    }
+
+    public int atualizar(Mensagem mensagem){
+        ContentValues values = new ContentValues();
+        values.put(Mensagens.SINC, mensagem.sinc);
+        String _id = String.valueOf(mensagem.id);
+        String where = Mensagens._ID+"=?";
+        String[] whereArgs = new String[]{_id};
+        int count = atualizar(values, where, whereArgs);
+        return count;
+    }
+
+    private int atualizar(ContentValues values, String where, String[] whereArgs){
+         return db.update(NOME_TABELA, values, where, whereArgs);
     }
 
     public void fechar(){

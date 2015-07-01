@@ -3,6 +3,9 @@ package si.ufc.br.coletor2microadsb.services;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;;
 import java.io.IOException;
@@ -32,11 +35,17 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        Resources res = context.getResources();
+        Bitmap icom = BitmapFactory.decodeResource(res, R.mipmap.ic_launcher);
         mNotifyManager =  (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new Notification.Builder(context);
         mBuilder.setContentTitle("Capturando mensagens")
                 .setContentText("Aguardando a chegada de mensagens...")
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(icom);
+
+
     }
 
     @Override
