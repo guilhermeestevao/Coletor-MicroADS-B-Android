@@ -3,16 +3,13 @@ package br.ufc.si.coletor.coletorads_b.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
 
-import br.ufc.si.coletor.coletorads_b.R;
+import br.ufc.si.coletor.coletorads_b.interfaces.NewMessageListener;
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem;
 import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
 import br.ufc.si.coletor.coletorads_b.usb.CDCDevice;
@@ -34,6 +31,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     private Notification.Builder mBuilder ;
     private int id = 1;
     private final String TAG = "TAG";
+    private NewMessageListener listener;
 
     @Override
     protected void onPreExecute() {
@@ -57,7 +55,6 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
         try {
            while(true){
-
                int i = getCdcDevice().read(buffer, 100);
                if (i > 0) {
                    resultRead = new String(buffer).substring(0, i);
@@ -69,7 +66,6 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
         }
 
     }
-
 
 
     private void salvar(String mensagem) {
@@ -85,6 +81,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
                         long timestamp = System.currentTimeMillis();
                         Mensagem m = new Mensagem(msg, timestamp);
                         getRepositorio().inserir(m);
+                        listener.onNewMenssge(m);
                     }catch (Exception e){
                         continue;
                     }
@@ -127,4 +124,11 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
         this.context = context;
     }
 
+    public NewMessageListener getListener() {
+        return listener;
+    }
+
+    public void setListener(NewMessageListener listener) {
+        this.listener = listener;
+    }
 }

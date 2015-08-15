@@ -17,7 +17,7 @@ public class RepositorioMensagem implements Serializable{
     private static final String NOME_BANCO = "adsb";
     private static final String NOME_TABELA = "mensagens";
     private static final String SCRIPT_DATABASE_DELETE = "DROP TABLE IF EXISTS "+NOME_TABELA;
-    private static final String SCRIPT_DATABASE_CREATE = new String("create table "+NOME_TABELA+" (_id integer primary key, data text, timestamp integer, sinc integer)");
+    private static final String SCRIPT_DATABASE_CREATE = new String("create table "+NOME_TABELA+"(_id integer primary key, data text, timestamp integer, sinc integer)");
     private static final int VERSAO_BANCO = 1;
     private SQLiteDatabase db;
     private SQLiteHelper dbHelper;
@@ -42,7 +42,6 @@ public class RepositorioMensagem implements Serializable{
 
     public long removerTudo(){
         long id = db.delete(NOME_TABELA, "", null);
-        db.execSQL(SCRIPT_DATABASE_CREATE);
         return id;
     }
 

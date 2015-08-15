@@ -55,7 +55,7 @@ public class SocketCliente extends IntentService{
         super.onCreate();
         Log.i("connection", "onCreate do service");
         repositorio = new RepositorioMensagem(this);
-        this.host = "192.168.129.138";
+        this.host = "192.168.0.104";
         this.port = 5000;
         this.timeout = 10000;
     }

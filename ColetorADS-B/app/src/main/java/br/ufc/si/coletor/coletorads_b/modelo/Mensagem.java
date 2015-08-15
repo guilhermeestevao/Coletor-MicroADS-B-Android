@@ -43,6 +43,6 @@ public class Mensagem {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
         String dataString = dateFormat.format(new Date(this.timestamp));
-        return dataString+"  "+data+" status: "+(sinc == 0 ? false:true);
+        return dataString+"  "+data+" status: ";
     }
 }

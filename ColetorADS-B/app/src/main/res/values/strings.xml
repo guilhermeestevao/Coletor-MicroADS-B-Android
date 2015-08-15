@@ -6,4 +6,25 @@
     <string name="tab_principal">Principal</string>
     <string name="tab_configuracoes">Configurações</string>
     <string name="tab_secundaria">Configurações</string>
+    <string-array name="forma">
+        <item>Intervalo de tempo</item>
+        <item>Quantidade de mensagens</item>
+    </string-array>
+    <string-array name="forma_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="tempo">
+        <item>Horas</item>
+        <item>Dias</item>
+        <item>Semanas</item>
+        <item>Meses</item>
+    </string-array>
+    <string-array name="tempo_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
 </resources>

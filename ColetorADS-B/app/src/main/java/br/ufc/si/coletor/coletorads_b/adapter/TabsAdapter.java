@@ -6,7 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import br.ufc.si.coletor.coletorads_b.fragments.Mainfragment;
+import br.ufc.si.coletor.coletorads_b.fragments.MainFragment;
+import br.ufc.si.coletor.coletorads_b.fragments.SettingsFragment;
 
 /**
  * Created by Guilherme on 07/08/2015.
@@ -30,10 +31,11 @@ public class TabsAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
 
         if(position == 0){
-            return "";
+            return "principal";
+        }else{
+            return "configuracoes";
         }
 
-        return "";
     }
 
     @Override
@@ -43,14 +45,12 @@ public class TabsAdapter extends FragmentPagerAdapter {
 
         if(position == 0){
             params.putString("tab", "principal");
-        }else if (position == 1){
-            params.putString("tab", "secundaria");
+            return MainFragment.newInstance(position);
+        }else{
+            params.putString("tab", "configuracoes");
+            return SettingsFragment.newInstance(position);
         }
 
-        Fragment fragment = new Mainfragment();
-        fragment.setArguments(params);
-
-        return fragment;
     }
 
 }
