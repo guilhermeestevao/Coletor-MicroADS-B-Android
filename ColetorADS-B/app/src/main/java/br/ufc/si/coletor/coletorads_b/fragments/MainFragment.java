@@ -2,10 +2,13 @@ package br.ufc.si.coletor.coletorads_b.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.software.shell.fab.ActionButton;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +30,8 @@ import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
 import br.ufc.si.coletor.coletorads_b.service.MessageReciverTask;
 import br.ufc.si.coletor.coletorads_b.usb.CDCDevice;
 import br.ufc.si.coletor.coletorads_b.usb.UsbController;
+import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
+import br.ufc.si.coletor.coletorads_b.util.SnackBarUtil;
 
 /**
  * Created by Guilherme on 07/08/2015.
@@ -42,6 +48,11 @@ public class MainFragment extends Fragment implements NewMessageListener{
     private MensagemAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private List<Mensagem> mensagens;
+    private SharedPreferences mPreferences;
+    private static final String AUTO_START = "autorun";
+    private ActionButton mActionButton;
+    private boolean controle;
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,7 +60,7 @@ public class MainFragment extends Fragment implements NewMessageListener{
         mContext = activity;
         receiver = new MessageReciverTask();
         repositorio = new RepositorioMensagem(mContext);
-
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     public static MainFragment newInstance(int position){
@@ -69,14 +80,32 @@ public class MainFragment extends Fragment implements NewMessageListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        mActionButton = (ActionButton) v.findViewById(R.id.action_button);
 
+        mActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!controle) {
+                    mActionButton.setButtonColor(getResources().getColor(R.color.fab_material_lime_900));
+                    controle = !controle;
+                    new InitColetor().execute();
+                } else {
+                    mActionButton.setButtonColor(getResources().getColor(R.color.fab_material_lime_500));
+                    receiver.parar();
+                    controle = !controle;
+                }
+            }
+        });
+
+
+
+
+
+        mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
-
         mRecyclerView.setLayoutManager(mLayoutManager);
-        
         mAdapter = new MensagemAdapter(mContext);
         mRecyclerView.setAdapter(mAdapter);
         return v;
@@ -86,12 +115,24 @@ public class MainFragment extends Fragment implements NewMessageListener{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(cdcDevice != null){
-            new InitColetor().execute();
-        }else{
+        boolean autoStart = mPreferences.getBoolean(AUTO_START, false);
 
+        if(cdcDevice == null){
+            SnackBarUtil.getUnsuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Desculpe, é necessario conectar o Micro ADS-B", Snackbar.LENGTH_LONG).show();
+            mActionButton.hide();
+            return;
         }
 
+
+
+        if(cdcDevice != null && autoStart){
+            new InitColetor().execute();
+            SnackBarUtil.getSuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Coleta iniciada!", Snackbar.LENGTH_LONG).show();
+            mActionButton.setState(ActionButton.State.PRESSED);
+        }else{
+            controle = false;
+            mActionButton.show();
+        }
 
     }
 

@@ -8,11 +8,14 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.Toast;
 
 import br.ufc.si.coletor.coletorads_b.dialogs.DialogConfiguracoesRemotas;
 import br.ufc.si.coletor.coletorads_b.service.SocketCliente;
+import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
+import br.ufc.si.coletor.coletorads_b.util.SnackBarUtil;
 
 /**
  * Created by guilherme on 31/05/15.
@@ -33,6 +36,10 @@ public class VerificaConexao extends BroadcastReceiver {
         if(statusRede && !statusProcesso && !ip.equals("") && port != 0){
             Intent it = new Intent(context, SocketCliente.class);
             context.startService(it);
+        }else{
+            if(!statusRede){
+                SnackBarUtil.getWarningSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Sem internet", Snackbar.LENGTH_LONG).show();
+            }
         }
 
     }

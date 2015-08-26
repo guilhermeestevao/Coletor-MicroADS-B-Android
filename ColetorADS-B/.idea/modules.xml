@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ColetorADS-B.iml" filepath="$PROJECT_DIR$/ColetorADS-B.iml" />
+      <module fileurl="file://$PROJECT_DIR$/adsb-java-libary/adsb-java-libary.iml" filepath="$PROJECT_DIR$/adsb-java-libary/adsb-java-libary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

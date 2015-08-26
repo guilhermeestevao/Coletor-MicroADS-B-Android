@@ -29,6 +29,12 @@ public class UsbController {
         devices = manager.getDeviceList();
     }
 
+    public UsbController(Context context){
+        this.context = context;
+        manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        devices = manager.getDeviceList();
+    }
+
     public UsbDevice getMicroAdsb(){
         microAdsb = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
         return microAdsb;
@@ -37,5 +43,10 @@ public class UsbController {
     public UsbManager getManager(){
         return this.manager;
     }
+
+    public Map<String, UsbDevice> getDevices(){
+        return this.devices;
+    }
+
 
 }
