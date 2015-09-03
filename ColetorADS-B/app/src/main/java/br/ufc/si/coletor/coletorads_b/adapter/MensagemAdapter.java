@@ -9,13 +9,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.ufc.si.coletor.coletorads_b.R;
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem;
 import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
 import br.ufc.si.coletor.coletorads_b.service.MessageReciverTask;
+import br.ufc.si.coletor.coletorads_b.util.DecoderADSB;
 
 
 /**
@@ -25,20 +29,29 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
 
     private List<Mensagem> mDataset;
     private Context context;
+    private DecoderADSB decoder;
 
     public MensagemAdapter(Context mContext) {
         this.context = mContext;
         RepositorioMensagem repositorio = new RepositorioMensagem(mContext);
         mDataset = repositorio.findAll();
+        decoder = new DecoderADSB();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mesagem;
+        public TextView tipo;
+        public TextView icao;
+        public TextView data;
+
 
         public ViewHolder(View v) {
             super(v);
             mesagem = (TextView) v.findViewById(R.id.mensagem);
+            tipo = (TextView) v.findViewById(R.id.tipo);
+            icao = (TextView) v.findViewById(R.id.icao);
+            data = (TextView) v.findViewById(R.id.data);
         }
     }
 
@@ -52,8 +65,13 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Mensagem mensagem = mDataset.get(position);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm");
 
-        holder.mesagem.setText(position+" - "+mensagem.toString());
+        holder.mesagem.setText(mensagem.data);
+        holder.data.setText(dateFormat.format(new Date(mensagem.timestamp)));
+        holder.icao.setText(decoder.getIcao24(mensagem.timestamp, mensagem.data));
+        holder.tipo.setText(decoder.getTypeMessage(mensagem.data));
+
     }
 
     @Override

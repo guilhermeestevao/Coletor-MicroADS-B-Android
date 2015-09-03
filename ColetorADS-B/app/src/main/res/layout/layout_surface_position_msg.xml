@@ -3,8 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="8dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/mensagem"
+        android:text="Conteúdo da mensagem"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/tipo"
@@ -14,37 +20,20 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:layout_below="@id/tipo"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/mensagem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"/>
-
-    <TextView
         android:id="@+id/data"
-        android:layout_below="@id/mensagem"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text="Data"
+        android:text="Tipo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/icao"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/mensagem"
         android:layout_alignParentBottom="true"
         android:text="ICAO"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-    <VideoView
-        android:layout_below="@id/icao"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color"/>
 
 
 </RelativeLayout>

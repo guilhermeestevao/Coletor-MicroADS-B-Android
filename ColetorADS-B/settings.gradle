@@ -1,1 +1,1 @@
-include ':app', ':adsb-java-libary'
+include ':app', ':libadsb'
