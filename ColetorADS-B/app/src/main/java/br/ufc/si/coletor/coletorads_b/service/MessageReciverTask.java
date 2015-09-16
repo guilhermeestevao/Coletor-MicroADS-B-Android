@@ -115,6 +115,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     public void parar(){
         cdcDevice.close();
         controle = false;
+
     }
 
     public RepositorioMensagem getRepositorio() {

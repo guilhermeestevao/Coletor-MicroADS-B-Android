@@ -16,6 +16,8 @@ package br.ufc.si.coletor.coletorads_b.util;
  *  along with org.opensky.libadsb.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,9 +78,11 @@ public class DecoderADSB {
 			icao24 = tools.toHexString(msg.getIcao24());
 
 			List<String> to_remove = new ArrayList<String>();
-			for (String key : decs.keySet())
-				if (decs.get(key).getLastUsedTime() < timestamp - 3600)
+			for (String key : decs.keySet()) {
+				if (decs.get(key).getLastUsedTime() < timestamp - 3600) {
 					to_remove.add(key);
+				}
+			}
 
 			for (String key : to_remove)
 				decs.remove(key);
@@ -110,15 +114,16 @@ public class DecoderADSB {
 
 	}
 
-	public void decodeMsg(double timestamp, String raw) throws Exception {
+	public Map<String, String> decodeMsg(long timestamp, String raw) throws Exception {
+		Map<String, String> infos = new HashMap<String, String>();
+
 		try {
 			msg = Decoder.genericDecoder(raw);
 		} catch (BadFormatException e) {
-			System.out.println("Malformed message! Skipping it...");
-			return;
+			infos.put("Message", "Malformed message! Skipping it...");
+			return infos;
 		}
 
-		Map<String, String> infos = new HashMap<String, String>();
 
 		if (tools.isZero(msg.getParity()) || msg.checkParity()) {
 			icao24 = tools.toHexString(msg.getIcao24());
@@ -126,20 +131,16 @@ public class DecoderADSB {
 
 			List<String> to_remove = new ArrayList<String>();
 			for (String key : decs.keySet())
-				if (decs.get(key).getLastUsedTime()<timestamp-3600)
+				if (decs.get(key).getLastUsedTime() < timestamp-3600)
 					to_remove.add(key);
 			
 			for (String key : to_remove)
 				decs.remove(key);
 
 
-
-
-
 			switch (msg.getType()) {
 			case ADSB_AIRBORN_POSITION:
 				airpos = (AirbornePositionMsg) msg;
-				System.out.print("["+icao24+"]: ");
 
 				// decode the position if possible
 				if (decs.containsKey(icao24)) {
@@ -160,7 +161,7 @@ public class DecoderADSB {
 				}
 				infos.put("Message2", "Horizontal containment radius is"+airpos.getHorizontalContainmentRadiusLimit()+"m");
 				infos.put("Message3", "Altitude is " + (airpos.hasAltitude() ? airpos.getAltitude() : "unknown") +"m");
-				break;
+				return infos;
 			case ADSB_SURFACE_POSITION:
 				surfpos = (SurfacePositionMsg) msg;
 
@@ -186,12 +187,12 @@ public class DecoderADSB {
 					infos.put("Message3", "Heading is "+surfpos.getHeading()+" m");
 
 				infos.put("Message4", "Airplane is on the ground.");
-				break;
+				return infos;
 			case ADSB_EMERGENCY:
 				status = (EmergencyOrPriorityStatusMsg) msg;
 				infos.put("Message1", "[" + icao24 + "]: " + status.getEmergencyStateText());
 				infos.put("Message2", "Mode A code is " + status.getModeACode()[0] + status.getModeACode()[1] + status.getModeACode()[2] + status.getModeACode()[3]);
-				break;
+				return infos;
 			case ADSB_AIRSPEED:
 				airspeed = (AirspeedHeadingMsg) msg;
 				infos.put("Message1", "[" + icao24 + "]: Airspeed is " + (airspeed.hasAirspeedInfo() ? airspeed.getAirspeed() + " m/s" : "unkown"));
@@ -199,12 +200,12 @@ public class DecoderADSB {
 					infos.put("Message2", "Heading is "+(airspeed.hasHeadingInfo() ? airspeed.getHeading()+ "°" : "unkown"));
 				if (airspeed.hasVerticalRateInfo())
 					infos.put("Message3", "Vertical rate is "+ (airspeed.hasVerticalRateInfo() ? airspeed.getVerticalRate()+" m/s" : "unkown"));
-				break;
+				return infos;
 			case ADSB_IDENTIFICATION:
 				ident = (IdentificationMsg) msg;
 				infos.put("Message1", "[" + icao24 + "]: Callsign is " + new String(ident.getIdentity()));
 				infos.put("Message2", "Category: " + ident.getCategoryDescription());
-				break;
+				return infos;
 			case ADSB_STATUS:
 				opstat = (OperationalStatusMsg) msg;
 				PositionDecoder dec;
@@ -219,26 +220,28 @@ public class DecoderADSB {
 					dec.setNICSupplementC(opstat.getNICSupplementC());
 				infos.put("Message1", "["+icao24+"]: Using ADS-B version "+opstat.getVersion());
 				infos.put("Message2", "Has ADS-B IN function: " + opstat.has1090ESIn());
-				break;
+				return infos;
 			case ADSB_TCAS:
 				tcas = (TCASResolutionAdvisoryMsg) msg;
 				infos.put("Message1", "["+icao24+"]: TCAS Resolution Advisory completed: " + tcas.hasRATerminated());
 				infos.put("Message2", "Threat type is " + tcas.getThreatType());
 				if (tcas.getThreatType() == 1) // it's a icao24 address
 					infos.put("Message3", "Threat identity is 0x"+String.format("%06x", tcas.getThreatIdentity()));
-				break;
+				return infos;
 			case ADSB_VELOCITY:
 				veloc = (VelocityOverGroundMsg) msg;
 				infos.put("Message1", "[" + icao24 + "]: Velocity is " + (veloc.hasVelocityInfo() ? veloc.getVelocity() : "unknown") + " m/s");
 				infos.put("Message2", "Heading is " + (veloc.hasVelocityInfo() ? veloc.getHeading() : "unknown") + " degrees");
 				infos.put("Message3", "Vertical rate is " + (veloc.hasVerticalRateInfo() ? veloc.getVerticalRate() : "unknown") + " m/s");
-				break;
+				return infos;
 			default:
 				infos.put("Message", "[" + icao24 + "]: Unknown message with downlink format " + msg.getDownlinkFormat());
+				return infos;
 			}
 		}
 		else { // CRC failed
 			infos.put("Message", "Message seems to contain biterrors.");
+			return infos;
 		}
 	}
 

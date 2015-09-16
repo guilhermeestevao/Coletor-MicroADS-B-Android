@@ -9,7 +9,7 @@
         android:textStyle="bold"
         android:padding="13dp"
         android:background="@color/accent"
-        android:text="Configurações de conexão remota"
+        android:text="Conteudo da mensagem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white" />

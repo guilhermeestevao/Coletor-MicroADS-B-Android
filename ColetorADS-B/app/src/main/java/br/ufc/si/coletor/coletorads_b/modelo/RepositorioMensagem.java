@@ -83,7 +83,8 @@ public class RepositorioMensagem implements Serializable{
 
     private Cursor getCursor() {
         try {
-            return db.query(NOME_TABELA, Mensagem.colunas, null, null, null, null, null, null);
+            return db.query(NOME_TABELA, Mensagem.colunas,null,null, null, null ,null);
+
         } catch (Exception e) {
             return null;
         }

@@ -5,6 +5,7 @@ import android.provider.BaseColumns;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by guilherme on 21/05/15.
@@ -16,6 +17,7 @@ public class Mensagem {
     public String data;
     public long timestamp;
     public int sinc;
+    public Map<String, String> infos;
 
     public Mensagem(){
 

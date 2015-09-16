@@ -92,6 +92,7 @@ public class MainFragment extends Fragment implements NewMessageListener{
                 } else {
                     mActionButton.setButtonColor(getResources().getColor(R.color.fab_material_lime_500));
                     receiver.parar();
+                    receiver.cancel(true);
                     controle = !controle;
                 }
             }
@@ -106,7 +107,7 @@ public class MainFragment extends Fragment implements NewMessageListener{
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MensagemAdapter(mContext);
+        mAdapter = new MensagemAdapter(mContext, getFragmentManager());
         mRecyclerView.setAdapter(mAdapter);
         return v;
     }
