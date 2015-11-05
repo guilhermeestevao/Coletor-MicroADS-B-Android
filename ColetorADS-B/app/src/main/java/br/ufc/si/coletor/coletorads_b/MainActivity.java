@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import br.ufc.si.coletor.coletorads_b.activity.BaseActivity;
 import br.ufc.si.coletor.coletorads_b.receivers.VerificaConexao;
+import br.ufc.si.coletor.coletorads_b.service.ExcluiMensagens;
+import br.ufc.si.coletor.coletorads_b.service.SocketCliente;
 import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
 
 public class MainActivity extends BaseActivity {
@@ -24,6 +26,9 @@ public class MainActivity extends BaseActivity {
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.snackbar);
         Intent it = new Intent(this, VerificaConexao.class);
         sendBroadcast(it);
+
+        Intent it2 = new Intent(this, ExcluiMensagens.class);
+        startService(it2);
     }
 
     @Override
@@ -50,5 +55,11 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         ColetorApplication.COORDINATOR_LAYOUT = mCoordinatorLayout;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, SocketCliente.class));
     }
 }

@@ -3,6 +3,7 @@ package br.ufc.si.coletor.coletorads_b.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -76,6 +77,8 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
             publishProgress();
             while(controleAux){
                 int i = getCdcDevice().read(buffer, 100);
+                Log.i("try",  "I = "+i);
+
                 if (i > 0) {
                     resultRead = new String(buffer).substring(0, i);
                     salvar(resultRead);
@@ -83,11 +86,13 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
                 controleAux = controle;
 
             }
+
+
         } catch (IOException e) {
             return e.getMessage();
         }
 
-        return "Coleta finalozada!";
+        return "Coleta finalizasda!";
 
     }
 
@@ -106,6 +111,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
                 Mensagem m = new Mensagem(msg, timestamp);
                 listener.onNewMenssge(m);
                 getRepositorio().inserir(m);
+                context.startService(new Intent(context, ExcluiMensagens.class));
             }catch (Exception e){
                 continue;
             }
@@ -113,8 +119,9 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
     }
 
     public void parar(){
-        cdcDevice.close();
+
         controle = false;
+
 
     }
 

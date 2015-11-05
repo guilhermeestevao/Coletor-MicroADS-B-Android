@@ -26,7 +26,6 @@ public class DialogConfiguracoesRemotas extends DialogPreference {
     public static final String PORT_SERVER = "port_server";
 
 
-
     public DialogConfiguracoesRemotas(Context context, AttributeSet attrs) {
         super(context, attrs);
         setPersistent(false);

@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem.Mensagens;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class RepositorioMensagem implements Serializable{
     }
 
     public long removerTudo(){
+        Log.d("apagar", "Excluindo tudo");
         long id = db.delete(NOME_TABELA, "", null);
         return id;
     }
@@ -109,6 +112,11 @@ public class RepositorioMensagem implements Serializable{
             }while(c.moveToNext());
         }
         return msgs;
+    }
+
+    public int getQuantidadeMensagens(){
+        Cursor c = getCursor();
+        return c.getCount();
     }
 
     public int atualizar(Mensagem mensagem){

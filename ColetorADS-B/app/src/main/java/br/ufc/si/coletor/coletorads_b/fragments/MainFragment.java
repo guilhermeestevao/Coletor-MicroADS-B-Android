@@ -24,6 +24,7 @@ import java.util.List;
 
 import br.ufc.si.coletor.coletorads_b.R;
 import br.ufc.si.coletor.coletorads_b.adapter.MensagemAdapter;
+import br.ufc.si.coletor.coletorads_b.interfaces.ClearMessagesList;
 import br.ufc.si.coletor.coletorads_b.interfaces.NewMessageListener;
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem;
 import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
@@ -36,7 +37,7 @@ import br.ufc.si.coletor.coletorads_b.util.SnackBarUtil;
 /**
  * Created by Guilherme on 07/08/2015.
  */
-public class MainFragment extends Fragment implements NewMessageListener{
+public class MainFragment extends Fragment implements NewMessageListener, ClearMessagesList{
 
     private Context mContext;
     private static final String MENSAGEM = "#43-03\r\n";
@@ -58,21 +59,14 @@ public class MainFragment extends Fragment implements NewMessageListener{
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
-        receiver = new MessageReciverTask();
         repositorio = new RepositorioMensagem(mContext);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        checkInfo();
     }
 
     public static MainFragment newInstance(int position){
         MainFragment frag = new MainFragment();
         return frag;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        checkInfo();
-
     }
 
     @Nullable
@@ -82,26 +76,41 @@ public class MainFragment extends Fragment implements NewMessageListener{
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mActionButton = (ActionButton) v.findViewById(R.id.action_button);
 
+        boolean autoStart = mPreferences.getBoolean(AUTO_START, false);
+
+        if(cdcDevice == null){
+            SnackBarUtil.getUnsuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Desculpe, é necessario conectar o Micro ADS-B", Snackbar.LENGTH_LONG).show();
+            mActionButton.hide();
+        }
+
+
+
+        if(cdcDevice != null && autoStart){
+            new InitColetor().execute();
+            SnackBarUtil.getSuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Coleta iniciada!", Snackbar.LENGTH_LONG).show();
+            mActionButton.setState(ActionButton.State.PRESSED);
+        }else{
+            controle = false;
+            mActionButton.show();
+        }
+
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!controle) {
                     mActionButton.setButtonColor(getResources().getColor(R.color.fab_material_lime_900));
                     controle = !controle;
+                    Log.e("controle", "Controle: "+controle);
                     new InitColetor().execute();
+
                 } else {
                     mActionButton.setButtonColor(getResources().getColor(R.color.fab_material_lime_500));
                     receiver.parar();
-                    receiver.cancel(true);
                     controle = !controle;
                 }
             }
         });
-
-
-
-
-
+        
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setReverseLayout(true);
@@ -116,24 +125,7 @@ public class MainFragment extends Fragment implements NewMessageListener{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        boolean autoStart = mPreferences.getBoolean(AUTO_START, false);
 
-        if(cdcDevice == null){
-            SnackBarUtil.getUnsuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Desculpe, é necessario conectar o Micro ADS-B", Snackbar.LENGTH_LONG).show();
-            mActionButton.hide();
-            return;
-        }
-
-
-
-        if(cdcDevice != null && autoStart){
-            new InitColetor().execute();
-            SnackBarUtil.getSuccessfulSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Coleta iniciada!", Snackbar.LENGTH_LONG).show();
-            mActionButton.setState(ActionButton.State.PRESSED);
-        }else{
-            controle = false;
-            mActionButton.show();
-        }
 
     }
 
@@ -154,25 +146,35 @@ public class MainFragment extends Fragment implements NewMessageListener{
 
     }
 
+    private void init(){
+        receiver = new MessageReciverTask();
+        receiver.setCdcDevice(cdcDevice);
+        receiver.setRepositorio(repositorio);
+        receiver.setAtivo(true);
+        receiver.setContext(mContext);
+        receiver.setListener(MainFragment.this);
+        receiver.execute();
+    }
+
+    @Override
+    public void clearList() {
+        mensagens.clear();
+        mAdapter.notifyDataSetChanged();
+    }
 
     class InitColetor extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d("init", s);
-            receiver.setCdcDevice(cdcDevice);
-            receiver.setRepositorio(repositorio);
-            receiver.setAtivo(true);
-            receiver.setContext(mContext);
-            receiver.setListener(MainFragment.this);
-            receiver.execute();
-
+            init();
         }
 
         @Override

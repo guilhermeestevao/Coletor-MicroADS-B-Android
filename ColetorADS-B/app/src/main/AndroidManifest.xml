@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".util.ColetorApplication"
@@ -42,12 +43,29 @@
 
         </service>
 
+        <service android:name=".service.ExcluiMensagens">
+
+        </service>
+
+        <receiver android:name=".util.SaveMessageReciver">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="SAVE_MESSAGES"/>
+            </intent-filter>
+
+        </receiver>
+
+        <service android:name=".util.SaveMessageFile">
+
+        </service>
 
         <receiver android:name=".receivers.VerificaConexao">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
 
     </application>
 

@@ -36,12 +36,14 @@
             android:dependency="autoexclusao"
             android:title="Período de tempo"
             android:key="tempo_tipo"
+            android:defaultValue="1"
             android:entries="@array/tempo"
             android:entryValues="@array/tempo_values" />
         <EditTextPreference
             android:dependency="autoexclusao"
             android:title="Determine a quantidade"
             android:key="quantidade"
+            android:defaultValue="1"
             android:inputType="number"/>
     </PreferenceCategory>
 </PreferenceScreen>

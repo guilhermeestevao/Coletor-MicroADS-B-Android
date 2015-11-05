@@ -82,7 +82,7 @@ public class SincronizaMensagens extends IntentService {
             msg+="\", ";
             msg+=time+", ";
             msg+="\"RLC-0001A\", \"ADSBHEXDATA\", 0, 0]";
-            Log.i("connection", msg);
+
             out.write(msg.getBytes());
             mensagem.sinc = 1;
             repositorio.atualizar(mensagem);

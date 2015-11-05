@@ -39,7 +39,6 @@ public class SocketCliente extends IntentService{
     private int timeout;
     private long delay = 60*1000;
 
-
     public SocketCliente(String name) {
         super(name);
     }
@@ -85,7 +84,9 @@ public class SocketCliente extends IntentService{
                 }
 
             } catch (IOException e) {
-                SnackBarUtil.getWarningSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Não foi possivel se conectar ao servidor", Snackbar.LENGTH_LONG).show();
+                if(ColetorApplication.COORDINATOR_LAYOUT != null)
+                    SnackBarUtil.getWarningSnackbar(ColetorApplication.COORDINATOR_LAYOUT, "Não foi possivel se conectar ao servidor", Snackbar.LENGTH_LONG).show();
+
                 agendar();
             }
     }
@@ -104,6 +105,7 @@ public class SocketCliente extends IntentService{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i("connection", "onDestroy do service");
     }
 
 
