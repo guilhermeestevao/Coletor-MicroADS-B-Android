@@ -5,6 +5,7 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
+import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
 
 
 /**
@@ -25,6 +26,8 @@ public class DialogApagarBanco extends DialogPreference {
         repositorio = new RepositorioMensagem(getContext());
         if(positiveResult){
             repositorio.removerTudo();
+            ColetorApplication.MENSAGENS.clear();
+            ColetorApplication.RECYCLEVIEW.getAdapter().notifyDataSetChanged();
         }
     }
 }

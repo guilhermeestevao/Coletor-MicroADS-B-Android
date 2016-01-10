@@ -99,6 +99,7 @@ public class MessageReciverTask extends AsyncTask<Void, Void, String> {
 
     private void salvar(String mensagem) {
 
+        Log.d("retorno", mensagem);
         mensagem = mensagem.replaceAll("[\\t\\n\\r]"," ");
         mensagem = mensagem.replaceAll(" ", "");
         String msgs[] =  mensagem.split("@");

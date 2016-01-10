@@ -75,6 +75,7 @@ public class MainFragment extends Fragment implements NewMessageListener, ClearM
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mActionButton = (ActionButton) v.findViewById(R.id.action_button);
+        ColetorApplication.RECYCLEVIEW = mRecyclerView;
 
         boolean autoStart = mPreferences.getBoolean(AUTO_START, false);
 

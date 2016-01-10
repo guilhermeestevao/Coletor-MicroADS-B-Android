@@ -1,5 +1,6 @@
 package br.ufc.si.coletor.coletorads_b.service;
 
+import android.app.Application;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
@@ -84,6 +85,7 @@ public class SincronizaMensagens extends IntentService {
             msg+="\"RLC-0001A\", \"ADSBHEXDATA\", 0, 0]";
 
             out.write(msg.getBytes());
+
             mensagem.sinc = 1;
             repositorio.atualizar(mensagem);
 

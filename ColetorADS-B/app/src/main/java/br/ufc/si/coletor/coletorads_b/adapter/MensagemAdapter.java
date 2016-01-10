@@ -25,6 +25,7 @@ import br.ufc.si.coletor.coletorads_b.dialogs.DialogInfoMensagem;
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem;
 import br.ufc.si.coletor.coletorads_b.modelo.RepositorioMensagem;
 import br.ufc.si.coletor.coletorads_b.service.MessageReciverTask;
+import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
 import br.ufc.si.coletor.coletorads_b.util.DecoderADSB;
 
 
@@ -43,7 +44,7 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
         RepositorioMensagem repositorio = new RepositorioMensagem(mContext);
         mManager = manager;
         mDataset = repositorio.findAll();
-
+        ColetorApplication.MENSAGENS = mDataset;
         decoder = new DecoderADSB();
         for(Mensagem msg : mDataset){
             msg.infos = getMapInfo(msg.data);

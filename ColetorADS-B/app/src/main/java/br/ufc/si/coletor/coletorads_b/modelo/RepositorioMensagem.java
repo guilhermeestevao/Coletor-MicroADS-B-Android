@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import br.ufc.si.coletor.coletorads_b.modelo.Mensagem.Mensagens;
+import br.ufc.si.coletor.coletorads_b.util.ColetorApplication;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
