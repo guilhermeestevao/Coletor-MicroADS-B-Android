@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">"Coletor ADS-B "</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="tab_principal">Principal</string>
+    <string name="tab_configuracoes">Configurações</string>
+    <string name="tab_secundaria">Configurações</string>
+    <string-array name="forma">
+        <item>Intervalo de tempo</item>
+        <item>Quantidade de mensagens</item>
+    </string-array>
+    <string-array name="forma_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="tempo">
+        <item>Minutos</item>
+        <item>Horas</item>
+        <item>Dias</item>
+    </string-array>
+    <string-array name="tempo_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+</resources>

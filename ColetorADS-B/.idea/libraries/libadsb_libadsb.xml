@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="libadsb.libadsb">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libadsb/libadsb.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

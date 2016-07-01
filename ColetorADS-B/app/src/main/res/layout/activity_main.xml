@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <fragment
+        android:id="@+id/fragment_main_tab"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:name="br.ufc.si.coletor.coletorads_b.fragments.MainTabFragment">
+    </fragment>
+
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</RelativeLayout>
+
